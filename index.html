@@ -934,25 +934,25 @@ function App() {
                     {/* Nombre */}
                     <div className="field form-full">
                       <label>Nombre del trabajador/a</label>
-                      <input name="nombre_trabajador" value={form.nombre_trabajador} onChange={handleChange} placeholder="Ej: Juan García" />
+                      <input name="nombre_trabajador" value={form.nombre_trabajador} onChange={handleChange} />
                     </div>
 
                     {/* IBM */}
                     <div className="field">
                       <label>IBM mensual ($) <span className="req">*</span></label>
-                      <input name="ibm" type="number" min="0" step="0.01" value={form.ibm} onChange={handleChange} placeholder="Ej: 500000" required />
+                      <input name="ibm" type="number" min="0" step="0.01" value={form.ibm} onChange={handleChange} required />
                     </div>
 
                     {/* Edad */}
                     <div className="field">
                       <label>Edad (años) <span className="req">*</span></label>
-                      <input name="edad" type="number" min="18" max="80" value={form.edad} onChange={handleChange} placeholder="Ej: 35" required />
+                      <input name="edad" type="number" min="18" max="80" value={form.edad} onChange={handleChange} required />
                     </div>
 
                     {/* Incapacidad */}
                     <div className="field">
                       <label>% Incapacidad <span className="req">*</span></label>
-                      <input name="porcentaje_incapacidad" type="number" min="0" max="100" step="0.01" value={form.porcentaje_incapacidad} onChange={handleChange} placeholder="Ej: 15" required />
+                      <input name="porcentaje_incapacidad" type="number" min="0" max="100" step="0.01" value={form.porcentaje_incapacidad} onChange={handleChange} required />
                     </div>
 
                     {/* Tipo accidente */}
@@ -994,13 +994,13 @@ function App() {
                     {/* CUIT empleador */}
                     <div className="field">
                       <label>CUIT Empleador</label>
-                      <input name="cuit_empleador" value={form.cuit_empleador} onChange={handleChange} placeholder="Ej: 30-12345678-9" />
+                      <input name="cuit_empleador" value={form.cuit_empleador} onChange={handleChange} />
                     </div>
 
                     {/* ART */}
                     <div className="field form-full">
                       <label>ART Aseguradora</label>
-                      <input name="art_aseguradora" value={form.art_aseguradora} onChange={handleChange} placeholder="Ej: Galeno ART S.A." />
+                      <input name="art_aseguradora" value={form.art_aseguradora} onChange={handleChange} />
                     </div>
 
                   </div>
