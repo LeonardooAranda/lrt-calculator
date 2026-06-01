@@ -1,0 +1,72 @@
+{
+  "resoluciones": [
+    {
+      "numero": "SRT 1/2024",
+      "vigencia_desde": "2024-03-01",
+      "vigencia_hasta": null,
+      "ibm_minimo": 2132600,
+      "piso_art11_muerte": 8530400,
+      "piso_gran_invalidez": 10663000,
+      "tope_remuneracion": 2132600,
+      "descripcion": "Resolución SRT 1/2024 - Valores vigentes 2024"
+    },
+    {
+      "numero": "SRT 11/2023",
+      "vigencia_desde": "2023-09-01",
+      "vigencia_hasta": "2024-02-28",
+      "ibm_minimo": 1566000,
+      "piso_art11_muerte": 6264000,
+      "piso_gran_invalidez": 7830000,
+      "tope_remuneracion": 1566000,
+      "descripcion": "Resolución SRT 11/2023 - Valores vigentes 2023"
+    },
+    {
+      "numero": "SRT 7/2023",
+      "vigencia_desde": "2023-06-01",
+      "vigencia_hasta": "2023-08-31",
+      "ibm_minimo": 1221700,
+      "piso_art11_muerte": 4886800,
+      "piso_gran_invalidez": 6108500,
+      "tope_remuneracion": 1221700,
+      "descripcion": "Resolución SRT 7/2023 - Valores vigentes junio 2023"
+    },
+    {
+      "numero": "SRT 4/2023",
+      "vigencia_desde": "2023-03-01",
+      "vigencia_hasta": "2023-05-31",
+      "ibm_minimo": 1025300,
+      "piso_art11_muerte": 4101200,
+      "piso_gran_invalidez": 5126500,
+      "tope_remuneracion": 1025300,
+      "descripcion": "Resolución SRT 4/2023 - Valores vigentes marzo 2023"
+    },
+    {
+      "numero": "SRT 1/2023",
+      "vigencia_desde": "2023-01-01",
+      "vigencia_hasta": "2023-02-28",
+      "ibm_minimo": 876000,
+      "piso_art11_muerte": 3504000,
+      "piso_gran_invalidez": 4380000,
+      "tope_remuneracion": 876000,
+      "descripcion": "Resolución SRT 1/2023 - Valores vigentes enero 2023"
+    }
+  ],
+  "coeficientes_ripte": {
+    "descripcion": "Coeficientes de actualización RIPTE (Remuneración Imponible Promedio de los Trabajadores Estables)",
+    "2024": 1.0,
+    "2023": 1.432,
+    "2022": 2.187,
+    "2021": 3.104,
+    "2020": 4.521
+  },
+  "adicional_art3_ley26773": {
+    "porcentaje": 20,
+    "descripcion": "Adicional del 20% sobre el total de la indemnización por Ley 26.773 Art. 3 (accidentes ocurridos fuera del lugar de trabajo)"
+  },
+  "formula": {
+    "descripcion": "Fórmula base: C = 53 × IBM × %Incapacidad × Coef. Edad",
+    "coeficiente_base": 53,
+    "coeficiente_edad": "edad / 65",
+    "nota": "El coeficiente de edad resulta de dividir la edad del trabajador por 65"
+  }
+}

@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calculadora LRT Argentina — Ley 24.557 y 26.773</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    :root {
+      --rosa-profundo: #6B2D4F;
+      --rosa-oscuro: #8B3A5A;
+      --rosa-medio: #B5607A;
+      --rosa-suave: #D4849B;
+      --rosa-claro: #ECC5D0;
+      --rosa-palido: #F5E6EC;
+      --rosa-neblina: #FAF2F5;
+      --crema: #FDF8F0;
+      --pergamino: #F7F0E8;
+      --oro-viejo: #C9A96E;
+      --oro-claro: #E8D5A3;
+      --gris-carbon: #1A1A1A;
+      --gris-tinta: #2C2C2C;
+      --gris-texto: #3D3D3D;
+      --gris-suave: #888;
+      --borde: #DDB5C4;
+      --borde-claro: #EDD5DE;
+      --sombra-sm: 0 2px 8px rgba(107,45,79,0.08);
+      --sombra-md: 0 4px 20px rgba(107,45,79,0.12);
+      --sombra-lg: 0 8px 40px rgba(107,45,79,0.16);
+      --radio: 2px;
+      --radio-md: 4px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'EB Garamond', 'Cormorant Garamond', Georgia, serif;
+      background: var(--crema);
+      color: var(--gris-tinta);
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+
+    /* ─── Background texture ─── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(ellipse at 20% 0%, rgba(180,96,122,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 100%, rgba(107,45,79,0.05) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    #root { position: relative; z-index: 1; }
+
+    /* ─── Header ─── */
+    .site-header {
+      background: linear-gradient(135deg, var(--rosa-profundo) 0%, var(--rosa-oscuro) 60%, var(--rosa-medio) 100%);
+      padding: 3rem 2rem 2.5rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .site-header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    .header-eyebrow {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--rosa-claro);
+      margin-bottom: 0.75rem;
+      position: relative;
+    }
+    .header-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.15;
+      margin-bottom: 0.5rem;
+      position: relative;
+    }
+    .header-title em {
+      font-style: italic;
+      color: var(--oro-claro);
+    }
+    .header-subtitle {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem;
+      font-style: italic;
+      color: var(--rosa-claro);
+      position: relative;
+    }
+    .header-ornament {
+      display: block;
+      margin: 1rem auto 0;
+      width: 80px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--oro-claro), transparent);
+      position: relative;
+    }
+
+    /* ─── Nav badges ─── */
+    .header-badges {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+      margin-top: 1.25rem;
+      flex-wrap: wrap;
+      position: relative;
+    }
+    .badge {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: rgba(255,255,255,0.9);
+      padding: 0.3rem 0.9rem;
+      border-radius: 30px;
+      font-size: 0.78rem;
+      font-family: 'Cormorant Garamond', serif;
+      letter-spacing: 0.05em;
+      backdrop-filter: blur(4px);
+    }
+
+    /* ─── Main layout ─── */
+    .main-container {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    @media (min-width: 900px) {
+      .main-container {
+        grid-template-columns: 1.1fr 0.9fr;
+        align-items: start;
+      }
+    }
+
+    /* ─── Cards ─── */
+    .card {
+      background: #fff;
+      border: 1px solid var(--borde-claro);
+      border-radius: var(--radio-md);
+      box-shadow: var(--sombra-sm);
+      overflow: hidden;
+    }
+    .card-header {
+      background: linear-gradient(135deg, var(--rosa-palido), var(--rosa-neblina));
+      border-bottom: 1px solid var(--borde-claro);
+      padding: 1.25rem 1.75rem 1rem;
+    }
+    .card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--rosa-profundo);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .card-title-icon {
+      width: 28px;
+      height: 28px;
+      background: var(--rosa-oscuro);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 0.75rem;
+      flex-shrink: 0;
+    }
+    .card-body { padding: 1.5rem 1.75rem; }
+
+    /* ─── Form ─── */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.1rem;
+    }
+    .form-full { grid-column: 1 / -1; }
+
+    .field { display: flex; flex-direction: column; gap: 0.4rem; }
+    .field label {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--rosa-oscuro);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .field label span.req { color: var(--rosa-medio); margin-left: 2px; }
+
+    .field input, .field select {
+      font-family: 'EB Garamond', serif;
+      font-size: 1rem;
+      color: var(--gris-tinta);
+      background: var(--rosa-neblina);
+      border: 1px solid var(--borde);
+      border-radius: var(--radio);
+      padding: 0.6rem 0.9rem;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+      outline: none;
+      width: 100%;
+    }
+    .field input:focus, .field select:focus {
+      border-color: var(--rosa-medio);
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(180,96,122,0.12);
+    }
+    .field input::placeholder { color: var(--gris-suave); font-style: italic; }
+    .field select { cursor: pointer; }
+
+    /* ─── Checkbox ─── */
+    .check-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      background: var(--rosa-palido);
+      border: 1px solid var(--borde-claro);
+      border-radius: var(--radio);
+      padding: 0.9rem 1rem;
+      cursor: pointer;
+    }
+    .check-row input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--rosa-oscuro);
+      flex-shrink: 0;
+      margin-top: 2px;
+      cursor: pointer;
+    }
+    .check-label { font-size: 0.95rem; color: var(--gris-texto); line-height: 1.5; }
+    .check-label strong { color: var(--rosa-profundo); font-weight: 600; }
+
+    /* ─── Button ─── */
+    .btn {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      padding: 0.85rem 2rem;
+      border: none;
+      border-radius: var(--radio);
+      cursor: pointer;
+      transition: all 0.25s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      width: 100%;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--rosa-oscuro), var(--rosa-profundo));
+      color: white;
+      box-shadow: var(--sombra-md);
+    }
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: var(--sombra-lg);
+    }
+    .btn-primary:active:not(:disabled) { transform: translateY(0); }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--rosa-oscuro);
+      border: 1.5px solid var(--rosa-medio);
+      margin-top: 0.75rem;
+    }
+    .btn-secondary:hover { background: var(--rosa-palido); }
+
+    .btn-outline-rosa {
+      background: white;
+      color: var(--rosa-oscuro);
+      border: 1px solid var(--borde);
+      font-size: 0.9rem;
+    }
+    .btn-outline-rosa:hover { background: var(--rosa-palido); border-color: var(--rosa-medio); }
+
+    /* ─── Resultado ─── */
+    .resultado-total {
+      background: linear-gradient(135deg, var(--rosa-profundo), var(--rosa-oscuro));
+      color: white;
+      border-radius: var(--radio-md);
+      padding: 1.5rem;
+      text-align: center;
+      margin-bottom: 1.25rem;
+    }
+    .resultado-total-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      opacity: 0.85;
+      margin-bottom: 0.3rem;
+    }
+    .resultado-total-monto {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      font-weight: 700;
+      line-height: 1.1;
+    }
+    .resultado-total-sub {
+      font-size: 0.8rem;
+      opacity: 0.75;
+      margin-top: 0.4rem;
+      font-style: italic;
+    }
+
+    /* ─── Steps ─── */
+    .steps-list { display: flex; flex-direction: column; gap: 0.6rem; }
+    .step-item {
+      border: 1px solid var(--borde-claro);
+      border-radius: var(--radio);
+      overflow: hidden;
+      transition: box-shadow 0.2s;
+    }
+    .step-item:hover { box-shadow: var(--sombra-sm); }
+    .step-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1rem;
+      background: var(--rosa-neblina);
+      cursor: pointer;
+      gap: 0.75rem;
+    }
+    .step-header:hover { background: var(--rosa-palido); }
+    .step-num {
+      width: 24px;
+      height: 24px;
+      background: var(--rosa-oscuro);
+      border-radius: 50%;
+      color: white;
+      font-size: 0.7rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .step-titulo {
+      flex: 1;
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--rosa-profundo);
+    }
+    .step-valor {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      color: var(--rosa-oscuro);
+      font-size: 0.95rem;
+      text-align: right;
+      white-space: nowrap;
+    }
+    .step-chevron {
+      color: var(--rosa-medio);
+      font-size: 0.75rem;
+      transition: transform 0.2s;
+      flex-shrink: 0;
+    }
+    .step-chevron.open { transform: rotate(180deg); }
+    .step-desc {
+      padding: 0.75rem 1rem 0.75rem 2.75rem;
+      background: white;
+      border-top: 1px solid var(--borde-claro);
+      font-size: 0.9rem;
+      color: var(--gris-texto);
+      line-height: 1.7;
+      white-space: pre-line;
+    }
+
+    /* ─── Summary table ─── */
+    .resumen-tabla {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+      margin-top: 1rem;
+    }
+    .resumen-tabla tr td {
+      padding: 0.55rem 0.75rem;
+      border-bottom: 1px solid var(--borde-claro);
+    }
+    .resumen-tabla tr:last-child td {
+      border-bottom: none;
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--rosa-profundo);
+      background: var(--rosa-palido);
+    }
+    .resumen-tabla td:last-child { text-align: right; font-weight: 500; }
+    .tag-positivo {
+      display: inline-block;
+      background: var(--rosa-claro);
+      color: var(--rosa-profundo);
+      border-radius: 30px;
+      padding: 0.1rem 0.6rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      font-family: 'Cormorant Garamond', serif;
+    }
+    .tag-neutral {
+      display: inline-block;
+      background: #e8e8e8;
+      color: #666;
+      border-radius: 30px;
+      padding: 0.1rem 0.6rem;
+      font-size: 0.75rem;
+      font-family: 'Cormorant Garamond', serif;
+    }
+
+    /* ─── Alert / info ─── */
+    .alerta {
+      display: flex;
+      gap: 0.75rem;
+      padding: 0.9rem 1rem;
+      border-radius: var(--radio);
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+    .alerta-info {
+      background: var(--rosa-palido);
+      border: 1px solid var(--borde-claro);
+      color: var(--rosa-profundo);
+    }
+    .alerta-legal {
+      background: var(--pergamino);
+      border: 1px solid var(--oro-claro);
+      color: #5A4A2A;
+    }
+    .alerta-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+
+    /* ─── Error ─── */
+    .error-box {
+      background: #FFF0F0;
+      border: 1px solid #FFBDBD;
+      border-radius: var(--radio);
+      padding: 1rem;
+      color: #8B0000;
+      font-size: 0.9rem;
+      margin-top: 0.75rem;
+    }
+
+    /* ─── Loading ─── */
+    .loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      padding: 3rem;
+      color: var(--rosa-medio);
+    }
+    .spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid var(--rosa-claro);
+      border-top-color: var(--rosa-oscuro);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ─── Resolución badge ─── */
+    .res-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--rosa-palido);
+      border: 1px solid var(--borde);
+      border-radius: 30px;
+      padding: 0.25rem 0.75rem;
+      font-size: 0.82rem;
+      color: var(--rosa-profundo);
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+    }
+
+    /* ─── Divider ─── */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--borde), transparent);
+      margin: 1.25rem 0;
+    }
+
+    /* ─── Footer ─── */
+    footer {
+      background: linear-gradient(180deg, var(--rosa-profundo) 0%, #3D1429 100%);
+      color: rgba(255,255,255,0.85);
+      padding: 3rem 2rem 2rem;
+      margin-top: 3rem;
+    }
+    .footer-inner {
+      max-width: 1080px;
+      margin: 0 auto;
+    }
+    .footer-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 0.3rem;
+    }
+    .footer-logo em { color: var(--oro-claro); }
+    .footer-tagline {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 2rem;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+      margin-bottom: 2.5rem;
+    }
+    .footer-col-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--rosa-claro);
+      margin-bottom: 0.9rem;
+      font-weight: 600;
+    }
+    .footer-col p, .footer-col a {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.9;
+      text-decoration: none;
+      display: block;
+      transition: color 0.2s;
+    }
+    .footer-col a:hover { color: var(--rosa-claro); }
+
+    .social-links { display: flex; flex-direction: column; gap: 0.4rem; }
+    .social-link {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.7) !important;
+      text-decoration: none;
+      transition: color 0.2s;
+      padding: 0.2rem 0;
+    }
+    .social-link:hover { color: var(--rosa-claro) !important; }
+    .social-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+    .si-linkedin { background: #0077B5; }
+    .si-instagram { background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
+    .si-twitter { background: #1DA1F2; }
+    .si-whatsapp { background: #25D366; }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.12);
+      padding-top: 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-copy {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.5);
+    }
+    .footer-copy strong { color: rgba(255,255,255,0.75); }
+    .footer-legal {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.4);
+      text-align: right;
+    }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 640px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .card-body { padding: 1.25rem; }
+      .main-container { padding: 1.5rem 1rem 3rem; }
+      .footer-bottom { flex-direction: column; text-align: center; }
+      .footer-legal { text-align: center; }
+    }
+
+    /* ─── Animations ─── */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .fade-in { animation: fadeInUp 0.45s ease forwards; }
+    .fade-in-delay { animation: fadeInUp 0.45s ease 0.1s both; }
+
+    /* ─── Scrollbar ─── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--rosa-neblina); }
+    ::-webkit-scrollbar-thumb { background: var(--rosa-claro); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--rosa-medio); }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect, useCallback } = React;
+
+// ─── CONFIG ───────────────────────────────────────────────────────────────────
+// Cambiá esta URL cuando hagas deploy del backend en Render:
+const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? 'http://localhost:8000'
+  : 'https://TU-BACKEND.onrender.com'; // ← REEMPLAZÁ con tu URL de Render
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+const fmt = (n) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 2 }).format(n);
+
+// ─── Icons ────────────────────────────────────────────────────────────────────
+const Icon = ({ name }) => {
+  const icons = {
+    calc: '⚖',
+    person: '👤',
+    doc: '📋',
+    money: '💰',
+    pdf: '📄',
+    info: 'ℹ',
+    law: '⚖️',
+    check: '✓',
+    arrow: '▼',
+    star: '★',
+    scale: '⚖',
+    plus: '+',
+    warning: '⚠',
+  };
+  return <span>{icons[name] || '•'}</span>;
+};
+
+// ─── Step accordion ───────────────────────────────────────────────────────────
+function StepItem({ paso }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="step-item">
+      <div className="step-header" onClick={() => setOpen(!open)}>
+        <div className="step-num">{paso.numero}</div>
+        <div className="step-titulo">{paso.titulo}</div>
+        <div className="step-valor">{paso.valor > 0 ? fmt(paso.valor) : '—'}</div>
+        <div className={`step-chevron ${open ? 'open' : ''}`}>▼</div>
+      </div>
+      {open && (
+        <div className="step-desc">{paso.descripcion}</div>
+      )}
+    </div>
+  );
+}
+
+// ─── Result Panel ─────────────────────────────────────────────────────────────
+function ResultadoPanel({ resultado, onExportPDF, loadingPDF }) {
+  return (
+    <div className="fade-in">
+      <div className="resultado-total">
+        <div className="resultado-total-label">Indemnización Total Estimada</div>
+        <div className="resultado-total-monto">{fmt(resultado.total_final)}</div>
+        <div className="resultado-total-sub">Ley 24.557 + Ley 26.773 · {resultado.resolucion_aplicada.numero}</div>
+      </div>
+
+      <table className="resumen-tabla">
+        <tbody>
+          <tr>
+            <td>IBM aplicado</td>
+            <td>{fmt(resultado.ibm_aplicado)}</td>
+          </tr>
+          <tr>
+            <td>Coeficiente de edad</td>
+            <td>{resultado.coeficiente_edad}</td>
+          </tr>
+          <tr>
+            <td>Fórmula base (53 × IBM × %Inc × Coef.Edad)</td>
+            <td>{fmt(resultado.formula_base)}</td>
+          </tr>
+          <tr>
+            <td>Indemnización base <span className="tag-positivo">Piso controlado</span></td>
+            <td>{fmt(resultado.indemnizacion_base)}</td>
+          </tr>
+          <tr>
+            <td>
+              Adicional Art. 3 (20% In Itinere)&nbsp;
+              {resultado.aplica_adicional_art3
+                ? <span className="tag-positivo">Aplicado</span>
+                : <span className="tag-neutral">No aplica</span>}
+            </td>
+            <td>{fmt(resultado.adicional_art3)}</td>
+          </tr>
+          <tr>
+            <td>
+              Gran Invalidez (Art. 10)&nbsp;
+              {resultado.aplica_gran_invalidez
+                ? <span className="tag-positivo">Aplicado</span>
+                : <span className="tag-neutral">No aplica</span>}
+            </td>
+            <td>{fmt(resultado.adicional_gran_invalidez)}</td>
+          </tr>
+          <tr>
+            <td>TOTAL FINAL</td>
+            <td>{fmt(resultado.total_final)}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div className="divider" />
+
+      <div className="card-title" style={{marginBottom:'0.9rem', fontSize:'1rem'}}>
+        <div className="card-title-icon">📋</div>
+        Desglose Paso a Paso
+      </div>
+
+      <div className="steps-list">
+        {resultado.pasos.map(p => <StepItem key={p.numero} paso={p} />)}
+      </div>
+
+      <div className="divider" />
+
+      <div className="alerta alerta-legal" style={{marginBottom:'1rem'}}>
+        <span className="alerta-icon">⚠</span>
+        <div>
+          <strong>Nota legal:</strong> Este cálculo es estimativo. Los valores reales pueden diferir según actualizaciones de RIPTE y particularidades del caso. Consulte con un profesional.
+        </div>
+      </div>
+
+      <button
+        className="btn btn-primary"
+        onClick={onExportPDF}
+        disabled={loadingPDF}
+      >
+        {loadingPDF ? <><span className="spinner" style={{width:18,height:18,borderWidth:2}} />  Generando PDF...</> : <><Icon name="pdf" /> Exportar Informe PDF</>}
+      </button>
+    </div>
+  );
+}
+
+// ─── Main App ─────────────────────────────────────────────────────────────────
+function App() {
+  const [resoluciones, setResoluciones] = useState([]);
+  const [loadingRes, setLoadingRes] = useState(true);
+  const [loadingCalc, setLoadingCalc] = useState(false);
+  const [loadingPDF, setLoadingPDF] = useState(false);
+  const [resultado, setResultado] = useState(null);
+  const [error, setError] = useState('');
+  const [apiOk, setApiOk] = useState(null);
+
+  const [form, setForm] = useState({
+    nombre_trabajador: '',
+    ibm: '',
+    edad: '',
+    porcentaje_incapacidad: '',
+    tipo_accidente: 'trabajo',
+    numero_resolucion: '',
+    gran_invalidez: false,
+    fecha_accidente: '',
+    cuit_empleador: '',
+    art_aseguradora: '',
+  });
+
+  // Check API & load resoluciones
+  useEffect(() => {
+    const init = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/resoluciones`);
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        setResoluciones(data.resoluciones);
+        if (data.resoluciones.length > 0) {
+          setForm(f => ({...f, numero_resolucion: data.resoluciones[0].numero}));
+        }
+        setApiOk(true);
+      } catch {
+        setApiOk(false);
+        setError(`No se pudo conectar al backend en ${API_BASE}. Asegurate de que el servidor esté corriendo.`);
+      } finally {
+        setLoadingRes(false);
+      }
+    };
+    init();
+  }, []);
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setForm(f => ({...f, [name]: type === 'checkbox' ? checked : value}));
+    setError('');
+  };
+
+  const buildPayload = () => ({
+    nombre_trabajador: form.nombre_trabajador || null,
+    ibm: parseFloat(form.ibm),
+    edad: parseInt(form.edad),
+    porcentaje_incapacidad: parseFloat(form.porcentaje_incapacidad),
+    tipo_accidente: form.tipo_accidente,
+    numero_resolucion: form.numero_resolucion,
+    gran_invalidez: form.gran_invalidez,
+    fecha_accidente: form.fecha_accidente || null,
+    cuit_empleador: form.cuit_empleador || null,
+    art_aseguradora: form.art_aseguradora || null,
+  });
+
+  const handleCalcular = async (e) => {
+    e.preventDefault();
+    setLoadingCalc(true);
+    setError('');
+    setResultado(null);
+    try {
+      const res = await fetch(`${API_BASE}/calcular`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(buildPayload()),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.detail || 'Error en el servidor');
+      }
+      const data = await res.json();
+      setResultado(data);
+      setTimeout(() => {
+        document.getElementById('resultado-section')?.scrollIntoView({behavior:'smooth', block:'start'});
+      }, 100);
+    } catch (err) {
+      setError(err.message || 'Error al calcular. Revisá los datos ingresados.');
+    } finally {
+      setLoadingCalc(false);
+    }
+  };
+
+  const handleExportPDF = async () => {
+    setLoadingPDF(true);
+    try {
+      const res = await fetch(`${API_BASE}/exportar-pdf`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(buildPayload()),
+      });
+      if (!res.ok) throw new Error('Error al generar PDF');
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `indemnizacion_lrt_${Date.now()}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      setError('No se pudo generar el PDF. ' + err.message);
+    } finally {
+      setLoadingPDF(false);
+    }
+  };
+
+  return (
+    <>
+      {/* ─── Header ─── */}
+      <header className="site-header">
+        <div className="header-eyebrow">República Argentina · Derecho Laboral</div>
+        <h1 className="header-title">
+          Calculadora de <em>Indemnizaciones</em><br/>por Accidente de Trabajo
+        </h1>
+        <p className="header-subtitle">Ley de Riesgos del Trabajo N° 24.557 · Ley N° 26.773</p>
+        <span className="header-ornament" />
+        <div className="header-badges">
+          <span className="badge">Art. 14 LRT — Fórmula Base</span>
+          <span className="badge">Art. 11 — Pago Único</span>
+          <span className="badge">Art. 3 Ley 26.773 — 20% Adicional</span>
+          <span className="badge">Art. 10 — Gran Invalidez</span>
+        </div>
+      </header>
+
+      {/* ─── Main ─── */}
+      <div className="main-container">
+
+        {/* ─── LEFT: Formulario ─── */}
+        <div>
+          <div className="card fade-in">
+            <div className="card-header">
+              <div className="card-title">
+                <div className="card-title-icon">⚖</div>
+                Datos para el Cálculo
+              </div>
+            </div>
+            <div className="card-body">
+
+              {apiOk === false && (
+                <div className="alerta alerta-info" style={{marginBottom:'1.25rem'}}>
+                  <span className="alerta-icon">ℹ</span>
+                  <div>
+                    <strong>Backend no conectado.</strong> Para usar la app, iniciá el backend con:<br/>
+                    <code style={{fontFamily:'monospace',fontSize:'0.85rem',background:'rgba(0,0,0,0.07)',padding:'0.1rem 0.4rem',borderRadius:3}}>uvicorn main:app --reload</code><br/>
+                    Y actualizá la variable <code>API_BASE</code> en el HTML si es necesario.
+                  </div>
+                </div>
+              )}
+
+              {loadingRes ? (
+                <div className="loading">
+                  <div className="spinner" />
+                  <span>Cargando resoluciones SRT...</span>
+                </div>
+              ) : (
+                <form onSubmit={handleCalcular}>
+                  <div className="form-grid">
+
+                    {/* Nombre */}
+                    <div className="field form-full">
+                      <label>Nombre del trabajador/a</label>
+                      <input name="nombre_trabajador" value={form.nombre_trabajador} onChange={handleChange} placeholder="Ej: Juan García" />
+                    </div>
+
+                    {/* IBM */}
+                    <div className="field">
+                      <label>IBM mensual ($) <span className="req">*</span></label>
+                      <input name="ibm" type="number" min="0" step="0.01" value={form.ibm} onChange={handleChange} placeholder="Ej: 500000" required />
+                    </div>
+
+                    {/* Edad */}
+                    <div className="field">
+                      <label>Edad (años) <span className="req">*</span></label>
+                      <input name="edad" type="number" min="18" max="80" value={form.edad} onChange={handleChange} placeholder="Ej: 35" required />
+                    </div>
+
+                    {/* Incapacidad */}
+                    <div className="field">
+                      <label>% Incapacidad <span className="req">*</span></label>
+                      <input name="porcentaje_incapacidad" type="number" min="0" max="100" step="0.01" value={form.porcentaje_incapacidad} onChange={handleChange} placeholder="Ej: 15" required />
+                    </div>
+
+                    {/* Tipo accidente */}
+                    <div className="field">
+                      <label>Tipo de accidente <span className="req">*</span></label>
+                      <select name="tipo_accidente" value={form.tipo_accidente} onChange={handleChange} required>
+                        <option value="trabajo">En el lugar de trabajo</option>
+                        <option value="in_itinere">In Itinere (trayecto)</option>
+                      </select>
+                    </div>
+
+                    {/* Resolución SRT */}
+                    <div className="field form-full">
+                      <label>Resolución SRT <span className="req">*</span></label>
+                      <select name="numero_resolucion" value={form.numero_resolucion} onChange={handleChange} required>
+                        {resoluciones.map(r => (
+                          <option key={r.numero} value={r.numero}>{r.numero} — IBM mín. ${r.ibm_minimo.toLocaleString('es-AR')}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* Gran invalidez */}
+                    <div className="form-full">
+                      <label className="check-row">
+                        <input type="checkbox" name="gran_invalidez" checked={form.gran_invalidez} onChange={handleChange} />
+                        <div className="check-label">
+                          <strong>Gran Invalidez (Art. 10 LRT)</strong><br/>
+                          El trabajador necesita asistencia de terceras personas para realizar actos elementales de su vida.
+                        </div>
+                      </label>
+                    </div>
+
+                    {/* Fecha accidente */}
+                    <div className="field">
+                      <label>Fecha del accidente</label>
+                      <input name="fecha_accidente" type="date" value={form.fecha_accidente} onChange={handleChange} />
+                    </div>
+
+                    {/* CUIT empleador */}
+                    <div className="field">
+                      <label>CUIT Empleador</label>
+                      <input name="cuit_empleador" value={form.cuit_empleador} onChange={handleChange} placeholder="Ej: 30-12345678-9" />
+                    </div>
+
+                    {/* ART */}
+                    <div className="field form-full">
+                      <label>ART Aseguradora</label>
+                      <input name="art_aseguradora" value={form.art_aseguradora} onChange={handleChange} placeholder="Ej: Galeno ART S.A." />
+                    </div>
+
+                  </div>
+
+                  {error && <div className="error-box">⚠ {error}</div>}
+
+                  <div style={{marginTop:'1.25rem'}}>
+                    <button type="submit" className="btn btn-primary" disabled={loadingCalc || !apiOk}>
+                      {loadingCalc
+                        ? <><span className="spinner" style={{width:18,height:18,borderWidth:2}} />  Calculando...</>
+                        : <><Icon name="calc" /> Calcular Indemnización</>
+                      }
+                    </button>
+                  </div>
+                </form>
+              )}
+            </div>
+          </div>
+
+          {/* Info card */}
+          <div className="card fade-in-delay" style={{marginTop:'1.25rem'}}>
+            <div className="card-body">
+              <div className="alerta alerta-info">
+                <span className="alerta-icon">⚖</span>
+                <div style={{fontSize:'0.88rem'}}>
+                  <strong>Fórmula base (Art. 14 LRT):</strong> C = 53 × IBM × %Incapacidad × (Edad ÷ 65)<br/>
+                  <em>Sujeto a piso mínimo y actualización RIPTE según resolución SRT vigente.</em>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ─── RIGHT: Resultado ─── */}
+        <div id="resultado-section">
+          {resultado ? (
+            <div className="card fade-in">
+              <div className="card-header">
+                <div className="card-title">
+                  <div className="card-title-icon">📊</div>
+                  Resultado del Cálculo
+                </div>
+                <div style={{marginTop:'0.5rem'}}>
+                  <span className="res-badge">📋 {resultado.resolucion_aplicada.numero}</span>
+                </div>
+              </div>
+              <div className="card-body">
+                <ResultadoPanel resultado={resultado} onExportPDF={handleExportPDF} loadingPDF={loadingPDF} />
+              </div>
+            </div>
+          ) : (
+            <div className="card fade-in-delay">
+              <div className="card-header">
+                <div className="card-title">
+                  <div className="card-title-icon">📊</div>
+                  Resultado
+                </div>
+              </div>
+              <div className="card-body">
+                <div style={{textAlign:'center', padding:'3rem 1.5rem', color:'var(--rosa-medio)'}}>
+                  <div style={{fontSize:'3rem',marginBottom:'1rem'}}>⚖️</div>
+                  <p style={{fontFamily:"'Playfair Display', serif", fontSize:'1.1rem', color:'var(--rosa-profundo)', marginBottom:'0.5rem'}}>
+                    Completá el formulario
+                  </p>
+                  <p style={{fontSize:'0.9rem', color:'var(--gris-suave)', fontStyle:'italic'}}>
+                    El desglose del cálculo aparecerá aquí, con cada paso explicado según la normativa vigente.
+                  </p>
+                </div>
+
+                <div className="divider" />
+
+                <div className="alerta alerta-legal">
+                  <span className="alerta-icon">📜</span>
+                  <div style={{fontSize:'0.85rem'}}>
+                    <strong>Marco normativo aplicable:</strong><br/>
+                    · Ley 24.557 — Arts. 6, 9, 10, 11, 14, 15<br/>
+                    · Ley 26.773 — Arts. 1, 3, 8, 17<br/>
+                    · Resoluciones SRT de actualización de pisos mínimos
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+      </div>
+
+      {/* ─── Footer ─── */}
+      <footer>
+        <div className="footer-inner">
+          <div className="footer-logo">Calculadora <em>LRT</em></div>
+          <div className="footer-tagline">Herramienta jurídica para el cálculo de indemnizaciones laborales</div>
+
+          <div className="footer-grid">
+            <div className="footer-col">
+              <div className="footer-col-title">Marco Normativo</div>
+              <p>Ley N° 24.557 — LRT</p>
+              <p>Ley N° 26.773 — Reforma LRT</p>
+              <p>Resoluciones SRT</p>
+              <p>Actualización RIPTE</p>
+            </div>
+
+            <div className="footer-col">
+              <div className="footer-col-title">Prestaciones</div>
+              <p>Art. 14 — Incapacidad permanente</p>
+              <p>Art. 10 — Gran Invalidez</p>
+              <p>Art. 11 — Pago único</p>
+              <p>Art. 3 Ley 26.773 — In Itinere</p>
+            </div>
+
+            <div className="footer-col">
+              <div className="footer-col-title">Redes Sociales</div>
+              <div className="social-links">
+                <a href="#" className="social-link">
+                  <span className="social-icon si-linkedin">in</span>
+                  LinkedIn
+                </a>
+                <a href="#" className="social-link">
+                  <span className="social-icon si-instagram">📷</span>
+                  Instagram
+                </a>
+                <a href="#" className="social-link">
+                  <span className="social-icon si-twitter">𝕏</span>
+                  Twitter / X
+                </a>
+                <a href="#" className="social-link">
+                  <span className="social-icon si-whatsapp">💬</span>
+                  WhatsApp
+                </a>
+              </div>
+            </div>
+
+            <div className="footer-col">
+              <div className="footer-col-title">Contacto</div>
+              <p>Buenos Aires, Argentina</p>
+              <p>Consultas laborales</p>
+              <a href="mailto:contacto@calculadoralrt.ar">contacto@calculadoralrt.ar</a>
+            </div>
+          </div>
+
+          <div className="footer-bottom">
+            <div className="footer-copy">
+              © <strong>2026 Calculadora LRT Argentina</strong>. Todos los derechos reservados.<br/>
+              Desarrollado por <strong>Tu Nombre / Estudio Jurídico</strong>.
+            </div>
+            <div className="footer-legal">
+              Herramienta informativa y orientativa.<br/>
+              No reemplaza el asesoramiento profesional.
+            </div>
+          </div>
+        </div>
+      </footer>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
